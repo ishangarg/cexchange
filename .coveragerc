@@ -1,0 +1,6 @@
+[run]
+source=authentication/,helper/,wallet/,
+omit=
+    */migrations/*
+    */__init__.py
+    */tests/*
