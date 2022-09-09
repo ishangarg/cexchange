@@ -76,12 +76,14 @@ WSGI_APPLICATION = 'cexchange.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+# 112358132134
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'polyfinexdb',
         'USER': 'root',
-        'PASSWORD': '112358132134',
+        'PASSWORD': 'MyNewPass',
         'HOST': 'localhost',
         'PORT': '3306',
     },
