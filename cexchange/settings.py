@@ -32,7 +32,7 @@ AUTH_USER_MODEL = "authentication.User"
 # Application definition
 
 INSTALLED_APPS = [
-    'rest_framework',
+    #default
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    #external
+    'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
+
+    #internal apps
     'authentication',
 ]
 
@@ -57,7 +62,6 @@ ROOT_URLCONF = 'cexchange.urls'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
 }
