@@ -1,8 +1,3 @@
-from django.contrib.auth import get_user_model, authenticate, login
-import json
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-
 from rest_framework import viewsets,status
 from authentication.models import User
 from authentication.serializers import CreateUserSerializer
