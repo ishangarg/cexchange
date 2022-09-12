@@ -52,6 +52,7 @@ class User(AbstractUser, PermissionsMixin, TrackingModel):
 
     objects = UserManager()
 
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_first_time = models.BooleanField(default=True)

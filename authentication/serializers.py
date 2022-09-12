@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from authentication.models import User
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate, login
 
 
-class UserSerializer(serializers.ModelSerializer):
+class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email','password']
@@ -14,4 +14,4 @@ class UserSerializer(serializers.ModelSerializer):
                                  password=validated_data['password'])
         user.save()
 
-        return validated_data
+        return user
