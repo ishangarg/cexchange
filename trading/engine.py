@@ -1,3 +1,5 @@
+import datetime
+import time
 from order_book_manager import OrderBookManager
 
 class Engine():
@@ -22,3 +24,12 @@ class Engine():
         self.market = market
         self.ORDERBOOK = OrderBookManager(self.market.symbol)
         pass
+
+    def publish_increment(self):
+        if self.INITIALIZING:
+            return
+        
+        if self.INCREMENT_COUNT < self.MIN_INCREMENT_COUNT_TO_SNAPSHOT and self.SNAPSHOT_TIME <= datetime.datetime.now() - self.MAX_PERIOD_TO_SNAPSHOT:
+            self.INCREMENT_COUNT = 0
+        
+        self.INCREMENT_COUNT += 1

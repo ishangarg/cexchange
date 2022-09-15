@@ -7,7 +7,9 @@ import dotenv
 
 
 def main():
-    dotenv.read_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
+    # x = os.getcwd()
+    # print(x)
+    dotenv.read_dotenv(os.getcwd(), '.env')
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cexchange.settings')
     try:

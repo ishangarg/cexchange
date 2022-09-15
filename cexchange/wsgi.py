@@ -13,7 +13,7 @@ import dotenv
 
 from django.core.wsgi import get_wsgi_application
 
-dotenv.read_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
+dotenv.read_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')) #TODO: Change WSGI .env directory in production
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cexchange.settings')
 
 application = get_wsgi_application()

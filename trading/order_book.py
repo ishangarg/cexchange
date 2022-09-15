@@ -3,7 +3,7 @@ from price_levels import PriceLevel
 from constants import OrderError, NotEnoughVolume, MarketOrderBookError
 from limit_order import LimitOrder
 from market_order import MarketOrder
-from .baseorder import BaseOrder
+from baseorder import BaseOrder
 
 class OrderBook():
 
