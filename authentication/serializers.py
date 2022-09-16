@@ -39,3 +39,6 @@ class CreateUserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(errors)
           
         return super(CreateUserSerializer, self).validate(data)
+
+
+# class LoginSerializer():
