@@ -23,6 +23,9 @@ class CreateUserView(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# class loginView():
+#     return viewSet(otpView)
+
 
 class SimpleApI(APIView):
     
