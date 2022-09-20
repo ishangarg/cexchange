@@ -1,7 +1,6 @@
-from distutils.log import error
 from rest_framework import viewsets,status
-from authentication.models import User
-from authentication.serializers import CreateUserSerializer
+from authentication.models import User, TwoStepAuthModel
+from authentication.serializers import CreateUserSerializer, OTPValidator
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -10,7 +9,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 
-from authentication.models import TwoStepAuthModel
+import pyotp
 
 # @csrf_exempt
 class CreateUserView(viewsets.ModelViewSet):
@@ -43,6 +42,7 @@ class SimpleApI(APIView):
         return Response(content)    
         
 
+
 class LoginView(TokenObtainPairView):
 
     def post(self, request, *args, **kwargs):
@@ -53,20 +53,31 @@ class LoginView(TokenObtainPairView):
         except TokenError as e:
             raise InvalidToken(e.args[0])
 
-        TwoStepAuthModel.objects.all().delete()
+        userObject = User.objects.filter(email=request.data["email"]).first()
 
-        token = TwoStepAuthModel.objects.create(token=serializer.validated_data)
+        otpSecret = "base32secret3232"
+        activeUserOtp = pyotp.TOTP(otpSecret, interval= 60)
+        currentOtp = activeUserOtp.now()
+
+        token = TwoStepAuthModel.objects.create(token=serializer.validated_data, user = userObject, userOtp = currentOtp)
         token.save()
 
-        login_message = {"message": "Login Successful, Please enter the OTP"}
+        # print(currentOtp)
+
+        login_message = {"message": "Login Successful, Please enter the OTP", "otp" : currentOtp}
 
         return Response(login_message, status=status.HTTP_200_OK)
 
 
 
 class OTPView(APIView):
+    
     def post(self,request):
-        otp = 12345
-        if(request.data["otp"] == otp):
-            return Response(TwoStepAuthModel.objects.all().first().token,status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        otp_validation = OTPValidator(request.data)
+        validation_message, status_code = otp_validation.validate_otp()
+        if status_code == 200 :
+            return Response(validation_message,status=status.HTTP_200_OK)
+        elif status_code == 401:
+            return Response(validation_message,status=status.HTTP_401_UNAUTHORIZED)
+
+        return Response(validation_message ,status=status.HTTP_400_BAD_REQUEST)

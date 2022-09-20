@@ -1,9 +1,13 @@
+
+from lib2to3.pgen2 import token
 from rest_framework import serializers
-from authentication.models import User
+from authentication.models import User, TwoStepAuthModel
 from django.contrib.auth import get_user_model
 from django.core import exceptions
 import django.contrib.auth.password_validation as validators
 
+import pyotp
+import datetime
 
 class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,4 +45,38 @@ class CreateUserSerializer(serializers.ModelSerializer):
         return super(CreateUserSerializer, self).validate(data)
 
 
-# class LoginSerializer():
+
+class OTPValidator:
+
+    def __init__(self,data):
+        self.inputOtp = data["otp"]
+        self.userEmail = data["email"]
+
+    def validate_otp(self):
+        validation_output = dict()
+
+        otpSecret = "base32secret3232"
+        activeUserOtp = pyotp.TOTP(otpSecret, interval= 60)
+
+        try:
+            self.user = User.objects.filter(email=self.userEmail).first()
+            tokenObject = TwoStepAuthModel.objects.filter(user= self.user).first()
+            # TwoStepAuthModel.objects.filter(token = tokenObject.token).delete()
+        except Exception as e:
+            validation_output["message"] = "User Invalid / Not active"
+            return validation_output, 401
+
+        print(activeUserOtp.interval - datetime.datetime.now().timestamp() % activeUserOtp.interval)
+
+        # print(self.inputOtp == tokenObject.userOtp)
+
+        print(activeUserOtp.verify(self.inputOtp))
+
+        if(activeUserOtp.verify(self.inputOtp) and self.inputOtp == tokenObject.userOtp):
+            validation_output["token"] = tokenObject.token
+            validation_output["message"] = "Validation Successful"
+
+            return validation_output, 200
+
+        validation_output["message"] = "incorrect OTP"
+        return validation_output, 400
