@@ -61,22 +61,17 @@ class OTPValidator:
         try:
             self.user = User.objects.filter(email=self.userEmail).first()
             tokenObject = TwoStepAuthModel.objects.filter(user= self.user).first()
-            # TwoStepAuthModel.objects.filter(token = tokenObject.token).delete()
+            userToken = tokenObject.token
+            userOtp = tokenObject.userOtp
+            TwoStepAuthModel.objects.filter(token = tokenObject.token).delete()
         except Exception as e:
-            validation_output["message"] = "User Invalid / Not active"
+            validation_output["message"] = "User Invalid / OTP Expired"
             return validation_output, 401
 
-        print(activeUserOtp.interval - datetime.datetime.now().timestamp() % activeUserOtp.interval)
-
-        # print(self.inputOtp == tokenObject.userOtp)
-
-        print(activeUserOtp.verify(self.inputOtp))
-
-        if(activeUserOtp.verify(self.inputOtp) and self.inputOtp == tokenObject.userOtp):
-            validation_output["token"] = tokenObject.token
+        if(activeUserOtp.verify(self.inputOtp) and self.inputOtp == userOtp):
             validation_output["message"] = "Validation Successful"
-
+            validation_output["token"] = userToken
             return validation_output, 200
-
+            
         validation_output["message"] = "incorrect OTP"
         return validation_output, 400

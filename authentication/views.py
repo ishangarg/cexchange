@@ -71,7 +71,7 @@ class LoginView(TokenObtainPairView):
 
 
 class OTPView(APIView):
-    
+
     def post(self,request):
         otp_validation = OTPValidator(request.data)
         validation_message, status_code = otp_validation.validate_otp()
